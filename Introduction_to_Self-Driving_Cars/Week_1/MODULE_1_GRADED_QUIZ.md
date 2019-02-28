@@ -71,7 +71,7 @@ This task involves multiple considerations, which of them are **predictive plann
 
 <br><br>
 
-***6.** Here are some rules for driving at a stop sign. Which of the following is an appropriate **priority ranking**?
+**6.** Here are some rules for driving at a stop sign. Which of the following is an appropriate **priority ranking**?
 
 1) For non all-way stop signs, stop at a point where you can see oncoming traffic  without blocking the intersection
 
@@ -83,8 +83,8 @@ This task involves multiple considerations, which of them are **predictive plann
 
 - [ ] 1, 2, 3
 - [ ] 3, 2, 1
-- [ ] 2, 1, 3
-- [x] 3, 1, 2
+- [x] 2, 1, 3
+- [ ] 3, 1, 2
 - [ ] 1, 3, 2
 
 <br><br>
@@ -140,15 +140,15 @@ Your vehicle follows the truck and maintains a constant distance away. What kind
 
 <br><br>
 
-***11.** You decide to **change lanes** to pass a truck. What kind of decision is this?
+**11.** You decide to **change lanes** to pass a truck. What kind of decision is this?
 
 **Ans : ** 
 
-- [x] Immediate
+- [ ] Immediate
 - [ ] Reactive
 - [ ] Long term planning
 - [ ] Rule-based planning
-- [ ] Short term planning
+- [x] Short term planning
 
 <br><br>
 
