@@ -27,7 +27,7 @@
 
 <br><br>
 
-***3.** Why is synchronization and timing accuracy important in the self driving system? **Choose the primary reason.**
+**3.** Why is synchronization and timing accuracy important in the self driving system? **Choose the primary reason.**
 
 **Ans : **
 
