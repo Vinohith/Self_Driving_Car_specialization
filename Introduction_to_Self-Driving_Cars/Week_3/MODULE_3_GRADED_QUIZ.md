@@ -91,7 +91,7 @@ This system can be analyzed to define quantifiable safety performance based on c
 
 **10. ** Given that an autonomous vehicle failure has happened and based on this tree, **what is the probability** that the failure happened because of Vehicle Control Algorithm Failure OR Inadequate Car Drivers? Please give your answer with the precision of 3 decimal places.
 
-![](/home/vinohith/Self_Driving_Car_specialization/Introduction_to_Self-Driving_Cars/Week_3/Images/Probabilistic-Fault-Tree.png)
+<img src = "Images/Probabilistic-Fault-Tree.png">
 
 **Ans : ** 0.382
 
