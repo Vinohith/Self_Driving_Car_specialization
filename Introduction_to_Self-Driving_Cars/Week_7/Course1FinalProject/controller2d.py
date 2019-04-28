@@ -119,13 +119,6 @@ class Controller2D(object):
         self.vars.create_var('integral_error_previous', 0.0)
         self.vars.create_var('throttle_previous', 0.0)
 
-        #############
-        # self.vars.create_var('v_previous', 0.0)
-        # self.vars.create_var('t_previous', 0.0)
-        # self.vars.create_var('throttle_previous', 0.0)
-        # self.vars.create_var('int_val', 0.0)
-        # self.vars.create_var('last_error', 0.0)
-
 
         # Skip the first frame to store previous values properly
         if self._start_control_loop:
@@ -285,7 +278,3 @@ class Controller2D(object):
         self.vars.t_previous = t
         self.vars.error_previous = e_v
         self.vars.integral_error_previous = inte_v
-        # ##################
-        # self.vars.t_previous = t
-        # self.vars.int_val = integral
-        # self.vars.throttle_previous = throttle_output
