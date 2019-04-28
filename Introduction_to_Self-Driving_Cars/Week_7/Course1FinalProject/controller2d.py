@@ -113,18 +113,18 @@ class Controller2D(object):
             Example: Accessing the value from 'v_previous' to be used
             throttle_output = 0.5 * self.vars.v_previous
         """
-        # self.vars.create_var('v_previous', 0.0)
-        # self.vars.create_var('t_previous', 0.0)
-        # self.vars.create_var('error_previous', 0.0)
-        # self.vars.create_var('integral_error_previous', 0.0)
-        # self.vars.create_var('throttle_previous', 0.0)
-
-        #############
         self.vars.create_var('v_previous', 0.0)
         self.vars.create_var('t_previous', 0.0)
+        self.vars.create_var('error_previous', 0.0)
+        self.vars.create_var('integral_error_previous', 0.0)
         self.vars.create_var('throttle_previous', 0.0)
-        self.vars.create_var('int_val', 0.0)
-        self.vars.create_var('last_error', 0.0)
+
+        #############
+        # self.vars.create_var('v_previous', 0.0)
+        # self.vars.create_var('t_previous', 0.0)
+        # self.vars.create_var('throttle_previous', 0.0)
+        # self.vars.create_var('int_val', 0.0)
+        # self.vars.create_var('last_error', 0.0)
 
 
         # Skip the first frame to store previous values properly
@@ -176,87 +176,6 @@ class Controller2D(object):
             # brake_output is optional and is not required to pass the
             # assignment, as the car will naturally slow down over time.
 
-            # throttle_output = 0
-            # brake_output    = 0
-
-            # # PID controller
-            # Kp = 1.0
-            # Ki = 1.0
-            # Kd = 0.01
-
-            # dt = t - self.vars.t_previous
-            # e_v = v_desired - v
-            # de_v = (e_v - self.vars.error_previous) / dt
-            # inte_v = (e_v + self.vars.integral_error_previous) * dt
-
-            # acc = Kp*e_v + Ki*inte_v + Kd*de_v
-
-            # if acc > 0.0:
-            #     throttle_output = (np.tanh(acc) + 1)/2
-            #     if throttle_output - self.vars.throttle_previous > 0.1:
-            #         throttle_output = self.vars.throttle_previous + 0.1
-            #     else:
-            #         throttle_output = 0
-
-
-
-            # ######################################################
-            # ######################################################
-            # # MODULE 7: IMPLEMENTATION OF LATERAL CONTROLLER HERE
-            # ######################################################
-            # ######################################################
-            # """
-            #     Implement a lateral controller here. Remember that you can
-            #     access the persistent variables declared above here. For
-            #     example, can treat self.vars.v_previous like a "global variable".
-            # """
-            
-            # # Change the steer output with the lateral controller. 
-            # steer_output    = 0
-
-            # Kdd = 0.1
-            # ld_actual = 1.0
-            # L = 2.9
-
-            # # dx = [x - ix for ix in np.array(waypoints)[:, :1]]
-            # # dy = [y - iy for iy in np.array(waypoints)[:, :2]]
-            # # d = np.array(abs(np.sqrt(idx ** 2 + idy ** 2)) for (idx, idy) in zip(dx, dy))
-            # # crosstrack_error = np.min(d)
-            # # ind = int(min(np.where(d == crosstrack_error)))
-            # # print(ind, d)
-            # current_xy = np.array([x, y])
-            # d = np.sqrt(np.sum((current_xy - np.array(waypoints)[:, :2])**2, axis=1))
-            # crosstrack_error = np.min(d)
-            # # ind = crosstrack_error.index()
-            # ind = np.where(d == crosstrack_error)
-            # ind = int(min(ind))
-
-            # ld = Kdd*v + ld_actual
-            # for i in range((ind+1), len(waypoints)):
-            #     if d[i] >= ld:
-            #         ind = i
-            #         break
-
-            # targetx = waypoints[ind][0]
-            # targety = waypoints[ind][1]
-            # print(d[ind])
-
-            # ld = Kdd*v + ld_actual
-            # alpha = np.arctan2((targety-y), (targetx-x)) - yaw
-            # delta = np.arctan2(2.0*L*np.sin(alpha)/ld, 1.0)
-
-            # # print(ind, crosstrack_error, delta)
-
-            # yaw += v/L*np.tan(delta)*dt
-
-            # expect_steer = min(1.22, yaw)
-            # expect_steer = max(-1.22, yaw)
-
-            # print(v, ind, crosstrack_error, delta, yaw, expect_steer)
-
-            # steer_output = expect_steer
-
-            #####################################
             kp = 1.0
             ki = 0.2
             kd = 0.01
@@ -268,15 +187,15 @@ class Controller2D(object):
             st = t - self.vars.t_previous
 
             # error term
-            delta_v = v_desired - v
+            e_v = v_desired - v
 
             # I
-            integral = self.vars.int_val + delta_v * st
+            inte_v = self.vars.integral_error_previous + e_v * st
 
             # D
-            derivate = (delta_v - self.vars.last_error) / st
+            derivate = (e_v - self.vars.error_previous) / st
 
-            acc = kp * delta_v + ki * integral + kd * derivate
+            acc = kp * e_v + ki * inte_v + kd * derivate
 
             if acc > 0:
                 throttle_output = (np.tanh(acc) + 1)/2
@@ -285,6 +204,7 @@ class Controller2D(object):
                     throttle_output = self.vars.throttle_previous + 0.1
             else:
                 throttle_output = 0
+
 
             ######################################################
             ######################################################
@@ -302,45 +222,23 @@ class Controller2D(object):
 
             # Use stanley controller for lateral control
             k_e = 0.3
-
             slope = (waypoints[-1][1]-waypoints[0][1])/ (waypoints[-1][0]-waypoints[0][0])
             a = -slope
             b = 1.0
-            # c = (slope*waypoints[0][0]) - waypoints[0][1]
+            c = (slope*waypoints[0][0]) - waypoints[0][1]
 
-            # #heading error
-            # yaw_diff_heading = np.arctan2(-a, b) - yaw
-            # if yaw_diff_heading > np.pi:
-            #     yaw_diff_heading -= 2*np.pi
-            # if yaw_diff_heading < - np.pi:
-            #     yaw_diff_heading += 2*np.pi
+            # heading error
             yaw_path = np.arctan2(waypoints[-1][1]-waypoints[0][1], waypoints[-1][0]-waypoints[0][0])
-            # yaw_path = np.arctan2(slope, 1.0)
+            # yaw_path = np.arctan2(slope, 1.0)  # This was turning the vehicle only to the right (some error)
             yaw_diff_heading = yaw_path - yaw 
             if yaw_diff_heading > np.pi:
                 yaw_diff_heading -= 2 * np.pi
             if yaw_diff_heading < - np.pi:
                 yaw_diff_heading += 2 * np.pi
 
-            #cross track error
-            # current_xy = np.array([x, y])
-            # crosstrack_error = np.min(np.sum((current_xy - np.array(waypoints)[:, :2])**2, axis=1))
-
-            # yaw_cross_track = np.arctan2(y-waypoints[0][1], x-waypoints[0][0])
-            # yaw_path = np.arctan2(-a, b) - yaw_cross_track
-            # if yaw_path > np.pi:
-            #     yaw_path -= 2 * np.pi
-            # if yaw_path < - np.pi:
-            #     yaw_path += 2 * np.pi
-            # if yaw_path > 0:
-            #     crosstrack_error = abs(crosstrack_error)
-            # else:
-            #     crosstrack_error = - abs(crosstrack_error)
-
-            # yaw_diff_crosstrack = np.arctan(k_e * crosstrack_error / (10+v))
+            # crosstrack erroe
             current_xy = np.array([x, y])
             crosstrack_error = np.min(np.sum((current_xy - np.array(waypoints)[:, :2])**2, axis=1))
-
             yaw_cross_track = np.arctan2(y-waypoints[0][1], x-waypoints[0][0])
             yaw_path2ct = yaw_path - yaw_cross_track
             if yaw_path2ct > np.pi:
@@ -351,19 +249,10 @@ class Controller2D(object):
                 crosstrack_error = abs(crosstrack_error)
             else:
                 crosstrack_error = - abs(crosstrack_error)
-
             yaw_diff_crosstrack = np.arctan(k_e * crosstrack_error / (v))
 
+            # final expected steering
             steer_expect = yaw_diff_crosstrack + yaw_diff_heading
-
-            # if steer_expect > np.pi:
-            #     steer_expect -= 2 * np.pi
-            # if steer_expect < - np.pi:
-            #     steer_expect += 2 * np.pi
-            # steer_expect = min(1.22, steer_expect)
-            # steer_expect = max(-1.22, steer_expect)
-
-            # steer_output = steer_expect
             if steer_expect > np.pi:
                 steer_expect -= 2 * np.pi
             if steer_expect < - np.pi:
@@ -371,48 +260,8 @@ class Controller2D(object):
             steer_expect = min(1.22, steer_expect)
             steer_expect = max(-1.22, steer_expect)
 
-
-
-            # # 1. calculate heading error
-            # yaw_path = np.arctan2(waypoints[-1][1]-waypoints[0][1], waypoints[-1][0]-waypoints[0][0])
-            # yaw_diff = yaw_path - yaw 
-            # if yaw_diff > np.pi:
-            #     yaw_diff -= 2 * np.pi
-            # if yaw_diff < - np.pi:
-            #     yaw_diff += 2 * np.pi
-
-            # # 2. calculate crosstrack error
-            # current_xy = np.array([x, y])
-            # crosstrack_error = np.min(np.sum((current_xy - np.array(waypoints)[:, :2])**2, axis=1))
-
-            # yaw_cross_track = np.arctan2(y-waypoints[0][1], x-waypoints[0][0])
-            # yaw_path = yaw_path - yaw_cross_track
-            # if yaw_path > np.pi:
-            #     yaw_path -= 2 * np.pi
-            # if yaw_path < - np.pi:
-            #     yaw_path += 2 * np.pi
-            # if yaw_path > 0:
-            #     crosstrack_error = abs(crosstrack_error)
-            # else:
-            #     crosstrack_error = - abs(crosstrack_error)
-
-            # yaw_diff_crosstrack = np.arctan(k_e * crosstrack_error / (k_v + v))
-            
-            # print (crosstrack_error, yaw_diff, yaw_diff_crosstrack)
-
-            # # 3. control low
-            # steer_expect = yaw_diff + yaw_diff_crosstrack
-            # if steer_expect > np.pi:
-            #     steer_expect -= 2 * np.pi
-            # if steer_expect < - np.pi:
-            #     steer_expect += 2 * np.pi
-            # steer_expect = min(1.22, steer_expect)
-            # steer_expect = max(-1.22, steer_expect)
-
-            # # 4. update
+            #update
             steer_output = steer_expect
-
-
 
             ######################################################
             # SET CONTROLS OUTPUT
@@ -432,11 +281,11 @@ class Controller2D(object):
             in the next iteration)
         """
         self.vars.v_previous = v  # Store forward speed to be used in next step
-        # self.vars.throttle_previous = throttle_output
-        # self.vars.t_previous = t
-        # self.vars.error_previous = e_v
-        # self.vars.integral_error_previous = inte_v
-        ##################
-        self.vars.t_previous = t
-        self.vars.int_val = integral
         self.vars.throttle_previous = throttle_output
+        self.vars.t_previous = t
+        self.vars.error_previous = e_v
+        self.vars.integral_error_previous = inte_v
+        # ##################
+        # self.vars.t_previous = t
+        # self.vars.int_val = integral
+        # self.vars.throttle_previous = throttle_output
