@@ -6,3 +6,5 @@
 
 [How a Kalman filter works](https://www.bzarg.com/p/how-a-kalman-filter-works-in-pictures/)
 
+[Bias of an estimator](https://en.wikipedia.org/wiki/Bias_of_an_estimator)
+
