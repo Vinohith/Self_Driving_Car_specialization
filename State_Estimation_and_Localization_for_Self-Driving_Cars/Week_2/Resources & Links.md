@@ -8,3 +8,5 @@
 
 [Bias of an estimator](https://en.wikipedia.org/wiki/Bias_of_an_estimator)
 
+[Nonlinear Kalman filtering](https://www.embedded.com/design/connectivity/4025693/Using-nonlinear-Kalman-filtering-to-estimate-signals)
+
